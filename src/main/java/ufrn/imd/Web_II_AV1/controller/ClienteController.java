@@ -1,5 +1,6 @@
 package ufrn.imd.Web_II_AV1.controller;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -9,6 +10,7 @@ import ufrn.imd.Web_II_AV1.model.ClienteEntity;
 
 import ufrn.imd.Web_II_AV1.model.dto.ClienteDto;
 import ufrn.imd.Web_II_AV1.repository.ClienteRepository;
+import ufrn.imd.Web_II_AV1.service.ClienteService;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,11 +20,11 @@ import java.util.Optional;
 public class ClienteController {
 
     @Autowired
-    private ClienteRepository repository;
+    private ClienteService clienteService;
 
     @GetMapping("/lista")
-    public ResponseEntity<List<ClienteEntity>> getAll(){
-        List<ClienteEntity> clientes = repository.findAll();
+    public ResponseEntity<List<ClienteDto>> getAll(){
+        List<ClienteDto> clientes = clienteService.findAll();
 
         if(clientes.isEmpty()){
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -32,58 +34,43 @@ public class ClienteController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ClienteEntity> getById(@PathVariable("id") long id){
-        Optional<ClienteEntity> clienteOptional = repository.findById(id);
+    public ResponseEntity<ClienteDto> getById(@PathVariable("id") long id){
+        Optional<ClienteDto> clienteOptional = clienteService.findById(id);
 
         return clienteOptional.map(ResponseEntity::ok).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
-
     }
 
     @PostMapping
-    public ResponseEntity<ClienteEntity> postCliente(@RequestBody ClienteDto clienteDto){
-        ClienteEntity cliente = new ClienteEntity();
-        BeanUtils.copyProperties(clienteDto,cliente);
-        cliente = repository.save(cliente);
+    public ResponseEntity<ClienteDto> postCliente(@Valid @RequestBody ClienteDto clienteDto){
+        ClienteDto cliente = clienteService.save(clienteDto);
         return ResponseEntity.ok(cliente);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ClienteEntity> putCliente(@PathVariable("id") long id,@RequestBody ClienteDto clienteDto){
-        Optional<ClienteEntity> clienteOptional = repository.findById(id);
-
-        if(clienteOptional.isEmpty()){
-            return ResponseEntity.notFound().build();
-        }
-
-        ClienteEntity cliente = clienteOptional.get();
-        BeanUtils.copyProperties(clienteDto,cliente,"id","ativo");
-        repository.save(cliente);
-        return ResponseEntity.ok(cliente);
+    public ResponseEntity<ClienteDto> putCliente(@PathVariable("id") long id,@Valid @RequestBody ClienteDto clienteDto){
+        return clienteService.update(id, clienteDto)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/deleteCliente/{id}")
-    public ResponseEntity<HttpStatus> deleteCliente(@PathVariable("id") long id){
-        Optional<ClienteEntity> clienteOptional = repository.findById(id);
-
-        if(clienteOptional.isEmpty()){
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    public ResponseEntity<Void> deleteCliente(@PathVariable("id") long id){
+        if(clienteService.deleteById(id)){
+            return ResponseEntity.noContent().build();
         }
-
-        repository.deleteById(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return ResponseEntity.notFound().build();
     }
 
     @PatchMapping("/deleteLogic/{id}")
     public ResponseEntity<HttpStatus> deleteLogic(@PathVariable("id") long id){
-        Optional<ClienteEntity> clienteOptional = repository.findById(id);
+        Optional<ClienteDto> clienteOptional = clienteService.findById(id);
 
         if(clienteOptional.isEmpty()){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        ClienteEntity cliente = clienteOptional.get();
-        cliente.setAtivo(false);
-        repository.save(cliente);
+        ClienteDto cliente = clienteOptional.get();
+        clienteService.save(cliente);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

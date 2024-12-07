@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0.33    # Versão estável e amplamente testada do MySQL
+    container_name: mysql_container
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: web2  # Senha do usuário root
+      MYSQL_DATABASE: imd_market # Nome do banco de dados
+      MYSQL_USER: root           # Nome do usuário
+      MYSQL_PASSWORD: web2       # Senha do usuário
+    volumes:
+      - mysql_data:/var/lib/mysql
+    restart: always
+
+volumes:
+  mysql_data:
+    driver: local
