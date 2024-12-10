@@ -1,16 +1,12 @@
-version: '3.8'
-
 services:
   mysql:
-    image: mysql:8.0.33    # Versão estável e amplamente testada do MySQL
+    image: mysql:5.7
     container_name: mysql_container
     ports:
       - "3306:3306"
     environment:
-      MYSQL_ROOT_PASSWORD: web2  # Senha do usuário root
-      MYSQL_DATABASE: imd_market # Nome do banco de dados
-      MYSQL_USER: root           # Nome do usuário
-      MYSQL_PASSWORD: web2       # Senha do usuário
+      MYSQL_ROOT_PASSWORD: 12345
+      MYSQL_DATABASE: imd_market
     volumes:
       - mysql_data:/var/lib/mysql
     command: --default-authentication-plugin=mysql_native_password

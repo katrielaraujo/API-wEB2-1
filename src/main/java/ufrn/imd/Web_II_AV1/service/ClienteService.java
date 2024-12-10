@@ -2,6 +2,7 @@ package ufrn.imd.Web_II_AV1.service;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import ufrn.imd.Web_II_AV1.exception.ClienteNaoEncontradoException;
 import ufrn.imd.Web_II_AV1.model.ClienteEntity;
 import ufrn.imd.Web_II_AV1.model.dto.ClienteDto;
@@ -10,6 +11,7 @@ import ufrn.imd.Web_II_AV1.repository.ClienteRepository;
 import java.util.List;
 import java.util.Optional;
 
+@Service
 public class ClienteService {
 
     @Autowired
