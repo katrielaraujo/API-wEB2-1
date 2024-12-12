@@ -21,7 +21,7 @@ public class PedidoEntity {
     @JoinColumn(name = "cliente_id", nullable = false)
     private ClienteEntity cliente;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
             name = "pedido_produto",
             joinColumns = @JoinColumn(name = "pedido_id"),
