@@ -34,6 +34,10 @@ public class SecurityConfigurations {
                         .requestMatchers(HttpMethod.POST,"/produtos/**","/clientes/**","/pedidos/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/produtos/**", "/clientes/**", "/pedidos/**", "/usuarios/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/produtos/**", "/clientes/**", "/pedidos/**", "/usuarios/**").hasRole("ADMIN")
+                        .requestMatchers(
+                            "/v3/api-docs/**",
+                            "/swagger-ui/**",
+                            "/swagger-ui.html").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
@@ -45,7 +49,9 @@ public class SecurityConfigurations {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
+    @Bean
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
     }
+
 }
